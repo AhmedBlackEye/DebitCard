@@ -12,3 +12,4 @@ class cipher:
 # msg = '1252'
 # x = cipher().encrypt(msg)
 # print(x.decode())
+#.
