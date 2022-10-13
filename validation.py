@@ -30,6 +30,6 @@ class DateValidator(Validator):
             days, month, year = document.text.split('-')
             days, month, year = int(days), int(month), int(year)
         except: 
-            raise_err("Enter Date in dd-mm-yyyy format", len(document.text))
+            raise_err("Enter Date in dd/mm/yyyy format", len(document.text))
         if not (1900<year<current_yr-2 and 0<days<32 and 0<month<13):
             raise_err(f"Year must be between 1900 and {current_yr-2} with realistic values", len(document.text))

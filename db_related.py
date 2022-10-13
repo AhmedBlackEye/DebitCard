@@ -1,4 +1,5 @@
 import sqlite3
+import cipher
 
 class Database:
     def __init__(self, name):
@@ -100,22 +101,21 @@ class DebitCard_db(Database):
         if output: return True
         else: return False
     
-    def check_passwd(self, usrname, passwd):
+    def check_passwd(self, usrname, given_passwd):
         conn, c = self.create_connection()
         c.execute(f"""SELECT password 
             FROM accounts
             WHERE username = "{usrname}" """)
-        real_passwd = c.fetchone()[0]
+        db_passwd = cipher.decrypt_msg(c.fetchone()[0])
         conn.commit()
         conn.close
-        if real_passwd == passwd: 
-            print(real_passwd)
-            print(passwd)
+        if db_passwd == given_passwd: 
             return True
-        else: return False
+        else: 
+            return False
 
 
-db = DebitCard_db('accounts.db')
+# db = DebitCard_db('accounts.db')
 # db.create_db()
 # db.add_account('omar elsayed', '23/8/2012', 'mastercard', 'false', '1234567812345678', '2345')
 # db.del_account('ahmed elsayed')
@@ -130,15 +130,15 @@ db = DebitCard_db('accounts.db')
             # username, visa_or_mastercard , contactless, card_number,
             # date_of_birth, expiry_date, password, money
 
-account = {
-    'usrname': 'ahmed.elsayed',
-    'visa_or_mastercard': 'visa',
-    'contactless': 'True',
-    'card_num': '1234567812345678',
-    'dob': '20/11/2005',
-    'expiry_date': '30/4/2008',
-    'passwd': '1234'
-}
+# account = {
+#     'usrname': 'ahmed.elsayed',
+#     'visa_or_mastercard': 'visa',
+#     'contactless': 'True',
+#     'card_num': '1234567812345678',
+#     'dob': '20/11/2005',
+#     'expiry_date': '30/4/2008',
+#     'passwd': '1234'
+# }
 
 # db.add_account(account)
 
