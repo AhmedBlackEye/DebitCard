@@ -8,7 +8,7 @@ from random import randint
 import colorama
 from termcolor import cprint, colored
 from pyfiglet import figlet_format
-from msvcrt import getch as wait
+import os
 
 class usr_interface:
 
@@ -34,7 +34,7 @@ class usr_interface:
         elif action == 'Verify card number':
             self.verify_num_program()
         elif action == 'Exit':
-            exit()
+            os._exit(1)
 
     def login(self):
         login_q = [{
@@ -130,12 +130,12 @@ class usr_interface:
                 self.login()
         elif not self.can_make_card(info['expiry_date']):
             cprint('\n[-]User must be younger than 30 to make a card', 'red')
-            wait()
+            self.wait()
             self.starting()
         else: 
             self.db.add_account(info)
             cprint('Your account has successfully registered, press Enter to Login', 'green')
-            wait()
+            self.wait()
             self.login()
 
     def get_expiry_date(self, dob):
@@ -181,7 +181,7 @@ class usr_interface:
         }]
 
         self.clear()
-        self.big_text('Welcome', 'yellow')
+        self.big_text(f'Welcome{self.usrname}', 'yellow')
         action = prompt(program_q, style=custom_style_2)
 
         if action.get('action') == "Show money in your account":
@@ -203,7 +203,7 @@ class usr_interface:
             return self.starting()
 
         elif action.get('action') == "Exit":
-            exit()
+            os._exit(1)
         
         self.access_program()
 
@@ -222,7 +222,7 @@ class usr_interface:
     def show_money(self):
         money = self.db.get_money_amount(self.usrname)
         cprint(f"Your account now has {money}£", 'green')
-        wait()
+        self.wait()
 
     def delete_account(self):
         is_sure = [{
@@ -236,7 +236,7 @@ class usr_interface:
         if ans.get('ans') == "Yes, I'm sure of deleting my account":
             self.db.del_account(self.usrname)
             cprint("Account has been successfully deleted", 'green')
-            wait()
+            self.wait()
         else:
             self.access_program()
 
@@ -245,7 +245,7 @@ class usr_interface:
         money_in_account = int(self.db.get_money_amount(self.usrname))
         if money_tobe_withdrawed > money_in_account:
             cprint(f"you can't withdraw such amount since you only have {money_in_account}\n", 'red')
-            wait()
+            self.wait()
         else:
             self.db.change_money(self.usrname, money_tobe_withdrawed, "withdraw" )
             self.show_money()
@@ -291,7 +291,7 @@ class usr_interface:
         if action.get('action') == "View all accounts":
             table = self.db.fetch_all_accounts()
             print(table)
-            wait()
+            self.wait()
         elif action.get('action') == "Delete an account":
             usrname = input("Enter the account's username:\n\t")
             if self.db.usr_exist(usrname):
@@ -299,7 +299,7 @@ class usr_interface:
                 cprint('The account has been successfully deleted', 'green')
             else:
                 cprint("User doesn't exist", 'red')
-            wait()
+            self.wait()
 
         elif action.get('action') == "Execute SQL command":
             command = input('Enter the SQL command:\n\t')
@@ -313,7 +313,7 @@ class usr_interface:
             return self.starting()
 
         elif action.get('action') == "Exit":
-            exit()
+            os._exit(1)
         
         self.admin_program()
 
@@ -322,6 +322,13 @@ class usr_interface:
 
     def clear(self):
         print(chr(27) + "[2J")
+
+    def wait(self):
+        if os.name == "nt":
+            from msvcrt import getch
+            getch()
+        else:
+            input()
 
 
 if __name__ == '__main__':
