@@ -195,7 +195,7 @@ class usr_interface:
         }]
 
         self.clear()
-        self.big_text(f'Welcome{self.usrname}', 'yellow')
+        self.big_text(f'Welcome {self.usrname}', 'yellow')
         action = prompt(program_q, style=custom_style_2)
 
         if action.get('action') == "Show money in your account":
