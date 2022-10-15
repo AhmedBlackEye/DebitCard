@@ -1,7 +1,9 @@
 import sqlite3
-import cipher
+from cipher import *
+
 
 class Database:
+
     def __init__(self, name):
         self.db_name = name
 
@@ -13,7 +15,9 @@ class Database:
             print(e)
         return conn, c
 
+
 class DebitCard_db(Database):
+
     def create_db(self):
         table = """CREATE TABLE accounts (
         ID INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -26,30 +30,34 @@ class DebitCard_db(Database):
         password TEXT,
         money INTERGER
         );"""
+
+        encr_pin = encrypt_('0000').decode()
+        exec = f"""INSERT INTO accounts(username, password)
+            VALUES("admin", "{encr_pin}") """
         conn, c = self.create_connection()
         c.execute(table)
-        c.execute(f"""INSERT INTO accounts(username, password)
-            VALUES("admin.admin", "0000") """)
+        c.execute(exec)
         conn.commit()
-        conn.close
+        conn.close()
 
     def add_account(self, account):
         conn, c = self.create_connection()
-        c.execute(f"""INSERT INTO accounts(
+        exec = f"""INSERT INTO accounts(
             username, visa_or_mastercard , contactless, card_number,
-            date_of_birth, expiry_date, password, money
-            )
+            date_of_birth, expiry_date, password, money)
             VALUES(
-            "{account.get('usrname')}", "{account.get('visa_or_mastercard')}", "{account.get('contactless')}",
-            "{account.get('card_num')}","{account.get('dob')}", "{account.get('expiry_date')}", "{account.get('passwd')}", 1000
-            ) """)
+            "{account.get('usrname')}", "{account.get('card_type')}", "{account.get('contactless')}",
+            "{account.get('card_num')}","{account.get('date_of_birth')}", "{account.get('expiry_date')}", "{account.get('passwd')}", 1000
+            ) """
+        c.execute(exec)
         conn.commit()
         conn.close
-    
+
     def del_account(self, usrname):
         conn, c = self.create_connection()
-        c.execute(f"""DELETE FROM accounts
-            WHERE username = "{usrname}" """)
+        exec = f"""DELETE FROM accounts
+            WHERE username = "{usrname}" """
+        c.execute(exec)
         conn.commit()
         conn.close
 
@@ -57,89 +65,70 @@ class DebitCard_db(Database):
         conn, c = self.create_connection()
         if added_or_withdrawed == 'add': sign = '+'
         elif added_or_withdrawed == 'withdraw': sign = '-'
-        c.execute(f"""UPDATE accounts
+        exec = f'''UPDATE accounts
             SET money = money{sign}{money_value}
-            WHERE username = "{usrname}";""")
+            WHERE username = "{usrname}"; '''
+        c.execute(exec)
         conn.commit()
         conn.close
 
     def get_money_amount(self, usrname):
         conn, c = self.create_connection()
-        c.execute(f"""SELECT money 
+        exec = f'''SELECT money 
             FROM accounts
-            WHERE username = "{usrname}" """)
+            WHERE username = "{usrname}" '''
+        c.execute(exec)
         money = c.fetchone()
         conn.commit()
         conn.close
         return money[0]
-    
+
     def fetch_all_accounts(self):
         conn, c = self.create_connection()
-        c.execute(f"""SELECT *
-            FROM accounts""")
-        accounts= c.fetchall()
+        exec = f"""SELECT * FROM accounts"""
+        c.execute(exec)
+        accounts = c.fetchall()
         conn.commit()
-        conn.close
-        return accounts[1:]
+        conn.close()
+        output = 'ID\t Username\tCard Number\t \tExpiry Date\t Money\n'
+        for account in accounts[1:]:
+            output += f"{account[0]}\t {account[1]}\t\t{account[4]}\t {account[6]}\t {account[8]}\n"
 
-    def exec_sql(self, command):
+        return output
+
+    def exec_sql(self, exec):
         conn, c = self.create_connection()
-        c.execute(command)
+        c.execute(exec)
         output = c.fetchall()
         conn.commit()
-        conn.close
+        conn.close()
         return output
-    
+
     def usr_exist(self, usrname):
         conn, c = self.create_connection()
-        c.execute(f"""SELECT username
+        exec = f'''SELECT username
             FROM accounts
-            WHERE username = "{usrname}" """)
+            WHERE username = "{usrname}" '''
+        c.execute(exec)
         output = c.fetchall()
         conn.commit()
         conn.close
         if output: return True
         else: return False
-    
+
     def check_passwd(self, usrname, given_passwd):
         conn, c = self.create_connection()
-        c.execute(f"""SELECT password 
+        exec = f'''SELECT password 
             FROM accounts
-            WHERE username = "{usrname}" """)
-        db_passwd = cipher.decrypt_msg(c.fetchone()[0])
+            WHERE username = "{usrname}"'''
+        c.execute(exec)
+        db_passwd = c.fetchone()[0]
         conn.commit()
-        conn.close
-        if db_passwd == given_passwd: 
-            return True
-        else: 
-            return False
+        conn.close()
+        db_passwd = decrypt_(db_passwd)
+        return db_passwd == given_passwd
 
 
-# db = DebitCard_db('accounts.db')
-# db.create_db()
-# db.add_account('omar elsayed', '23/8/2012', 'mastercard', 'false', '1234567812345678', '2345')
-# db.del_account('ahmed elsayed')
-# db.change_money('ahmed elsayed', 700, 'withdraw')
-# print(db.fetch_all_accounts())
-# print(db.exec_sql("""UPDATE accounts
-#             SET money = money+300
-#             WHERE username = "omar elsayed";"""))
-# print(db.usr_exist('admin'))
-# print(db.usr_exist('ahmed'))
-
-            # username, visa_or_mastercard , contactless, card_number,
-            # date_of_birth, expiry_date, password, money
-
-# account = {
-#     'usrname': 'ahmed.elsayed',
-#     'visa_or_mastercard': 'visa',
-#     'contactless': 'True',
-#     'card_num': '1234567812345678',
-#     'dob': '20/11/2005',
-#     'expiry_date': '30/4/2008',
-#     'passwd': '1234'
-# }
-
-# db.add_account(account)
-
-# print(db.check_passwd('ahmed.elsayed', '1234'))
+if __name__ == '__main__':
+    db = DebitCard_db('accounts.db')
+    db.create_db()
