@@ -65,7 +65,7 @@ class usr_interface:
             if self.db.check_passwd(login_info.get('usrname'),
                                     login_info.get('pin')):
                 self.usrname = login_info.get('usrname')
-                self.access_program()
+                self.program()
             else:
                 self.wrong_login_options()
         else:
@@ -180,7 +180,7 @@ class usr_interface:
         else:
             return True
 
-    def access_program(self):
+    def program(self):
         program_q = [{
             'type':
             'list',
@@ -219,7 +219,7 @@ class usr_interface:
         elif action.get('action') == "Exit":
             os._exit(1)
 
-        self.access_program()
+        self.program()
 
     def input_money_amount(self, add_or_withdraw):
         q = [{
@@ -256,7 +256,7 @@ class usr_interface:
             cprint("Account has been successfully deleted", 'green')
             self.wait()
         else:
-            self.access_program()
+            self.program()
 
     def withdraw_money(self):
         money_tobe_withdrawed = self.input_money_amount('withdraw')
