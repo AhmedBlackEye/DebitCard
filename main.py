@@ -10,6 +10,7 @@ from termcolor import cprint, colored
 from pyfiglet import figlet_format
 import os
 
+
 class usr_interface:
 
     def __init__(self):
@@ -18,16 +19,19 @@ class usr_interface:
 
     def starting(self):
         starting_q = [{
-            'type': 'list',
-            'name': 'action',
-            'message': '',
+            'type':
+            'list',
+            'name':
+            'action',
+            'message':
+            '',
             'choices': ["Login", "Sign up", "Verify card number", 'Exit']
-            }]
+        }]
 
         self.clear()
         self.big_text('Debit Card CLI', 'cyan')
         action = prompt(starting_q, style=custom_style_2).get('action')
-        if action == 'Login': 
+        if action == 'Login':
             self.login()
         elif action == 'Sign up':
             self.sign_up()
@@ -42,37 +46,39 @@ class usr_interface:
             "name": "usrname",
             "message": "Username:",
             "validate": UsrnameValidator
-            },{
+        }, {
             'type': "password",
             "name": "pin",
             "message": "PIN:",
             "validate": NumValidator
-            }]
-        
+        }]
+
         self.clear()
         self.big_text('Login', 'magenta')
         login_info = prompt(login_q, style=custom_style_2)
 
-        if login_info.get('usrname') == 'admin' and self.db.check_passwd('admin', login_info.get('pin')):
+        if login_info.get('usrname') == 'admin' and self.db.check_passwd(
+                'admin', login_info.get('pin')):
             self.usrname = 'admin'
             self.admin_program()
         elif self.db.usr_exist(login_info.get('usrname')):
-            if self.db.check_passwd(login_info.get('usrname'), login_info.get('pin')):
+            if self.db.check_passwd(login_info.get('usrname'),
+                                    login_info.get('pin')):
                 self.usrname = login_info.get('usrname')
                 self.access_program()
             else:
-                self.wrong_login_options()       
+                self.wrong_login_options()
         else:
             self.wrong_login_options()
-        
+
     def wrong_login_options(self):
         choices = [{
             'type': 'list',
             'name': 'ans',
             'message': 'Your username or password was wrong',
             'choices': ["Try again", "Go back"]
-            }]
-        
+        }]
+
         options = prompt(choices, style=custom_style_2)
         if options.get('ans') == 'Try again':
             self.login()
@@ -85,27 +91,27 @@ class usr_interface:
             "name": "usrname",
             "message": "Username:",
             "validate": UsrnameValidator
-            },{
+        }, {
             'type': "input",
             "name": "date_of_birth",
             "message": "Date Of Birth:",
             "validate": DateValidator
-            },{
+        }, {
             'type': "password",
             "name": "pin",
             "message": "PIN:",
             "validate": NumValidator
-            }, {
+        }, {
             'type': 'list',
             'name': 'card_type',
             'message': 'Visa or Mastercard?',
             'choices': ["Visa", "Mastercard"]
-            }, {
+        }, {
             'type': 'list',
             'name': 'contactless',
             'message': 'Contactless?',
             'choices': ["Yes", "No"]
-            }]
+        }]
 
         self.clear()
         self.big_text('Sign up', 'magenta')
@@ -116,10 +122,10 @@ class usr_interface:
 
         if self.db.usr_exist(info.get('usrname')):
             options = [{
-            'type': 'list',
-            'name': 'action',
-            'message': "if that\'s you then login",
-            'choices': ["Login", "Sign up"]
+                'type': 'list',
+                'name': 'action',
+                'message': "if that\'s you then login",
+                'choices': ["Login", "Sign up"]
             }]
 
             cprint('\n[-]User already exists', 'red')
@@ -132,37 +138,39 @@ class usr_interface:
             cprint('\n[-]User must be younger than 30 to make a card', 'red')
             self.wait()
             self.starting()
-        else: 
+        else:
             self.db.add_account(info)
-            cprint('Your account has successfully registered, press Enter to Login', 'green')
+            cprint(
+                'Your account has successfully registered, press Enter to Login',
+                'green')
             self.wait()
             self.login()
 
     def get_expiry_date(self, dob):
         dob = datetime.strptime(dob, '%d/%m/%Y').date()
-        days_in_30yr = int(365.25*30)
+        days_in_30yr = int(365.25 * 30)
         expiry_date = dob + timedelta(days=days_in_30yr)
         return expiry_date
 
     def get_card_num(self):
-        num = str(randint(1_000_000_000_000_000,9_999_999_999_999_999))
+        num = str(randint(1_000_000_000_000_000, 9_999_999_999_999_999))
         if not self.verify_card_number(num):
             return self.get_card_num()
-            
+
         else:
             return num
 
     def verify_card_number(self, nums):
         total = 0
         for index, num in enumerate(nums):
-            if index%2 == 1:
-                total += sum(int(i) for i in str(int(num)*2))
+            if index % 2 == 1:
+                total += sum(int(i) for i in str(int(num) * 2))
             else:
                 total += int(num)
 
-        if total %10 == 0:
+        if total % 10 == 0:
             return True
-        else: 
+        else:
             return False
 
     def can_make_card(self, expiry_date):
@@ -174,10 +182,16 @@ class usr_interface:
 
     def access_program(self):
         program_q = [{
-            'type': 'list',
-            'name': 'action',
-            'message': '\n'*75,
-            'choices': ["Show money in your account", "Add money", "Withdraw money", "Log out", "Delete account", "Exit"]
+            'type':
+            'list',
+            'name':
+            'action',
+            'message':
+            '\n' * 75,
+            'choices': [
+                "Show money in your account", "Add money", "Withdraw money",
+                "Log out", "Delete account", "Exit"
+            ]
         }]
 
         self.clear()
@@ -189,7 +203,7 @@ class usr_interface:
 
         elif action.get('action') == "Add money":
             money_tobe_added = self.input_money_amount('add')
-            self.db.change_money(self.usrname, money_tobe_added, "add" )
+            self.db.change_money(self.usrname, money_tobe_added, "add")
             self.show_money()
 
         elif action.get('action') == "Withdraw money":
@@ -204,19 +218,19 @@ class usr_interface:
 
         elif action.get('action') == "Exit":
             os._exit(1)
-        
+
         self.access_program()
 
     def input_money_amount(self, add_or_withdraw):
         q = [{
-        'type': "input",
-        "name": "money",
-        "message": f"How much money do you want to {add_or_withdraw}?",
-        "validate": PostiveIntChecker,
-        "filter": lambda val: int(val)
+            'type': "input",
+            "name": "money",
+            "message": f"How much money do you want to {add_or_withdraw}?",
+            "validate": PostiveIntChecker,
+            "filter": lambda val: int(val)
         }]
 
-        ans = prompt(q, style =custom_style_2)
+        ans = prompt(q, style=custom_style_2)
         return ans.get('money')
 
     def show_money(self):
@@ -226,10 +240,14 @@ class usr_interface:
 
     def delete_account(self):
         is_sure = [{
-            'type': 'list',
-            'name': 'ans',
-            'message': "Are you sure of delelting your account(Y/n)? (Note:this action can't be reversed)",
-            'choices': ["Yes, I'm sure of deleting my account", "No, I want to go back"]
+            'type':
+            'list',
+            'name':
+            'ans',
+            'message':
+            "Are you sure of delelting your account(Y/n)? (Note:this action can't be reversed)",
+            'choices':
+            ["Yes, I'm sure of deleting my account", "No, I want to go back"]
         }]
 
         ans = prompt(is_sure, style=custom_style_2)
@@ -244,26 +262,29 @@ class usr_interface:
         money_tobe_withdrawed = self.input_money_amount('withdraw')
         money_in_account = int(self.db.get_money_amount(self.usrname))
         if money_tobe_withdrawed > money_in_account:
-            cprint(f"you can't withdraw such amount since you only have {money_in_account}\n", 'red')
+            cprint(
+                f"you can't withdraw such amount since you only have {money_in_account}\n",
+                'red')
             self.wait()
         else:
-            self.db.change_money(self.usrname, money_tobe_withdrawed, "withdraw" )
+            self.db.change_money(self.usrname, money_tobe_withdrawed,
+                                 "withdraw")
             self.show_money()
 
     def verify_num_program(self):
         card_num_q = [{
-                'type': 'input',
-                'name': 'card_num',
-                'message': 'Enter the card number:',
-                "validate": CardNumValidator
-                }]
+            'type': 'input',
+            'name': 'card_num',
+            'message': 'Enter the card number:',
+            "validate": CardNumValidator
+        }]
 
         self.clear()
         self.big_text("Card Number Verifier", 'magenta')
         card_num = prompt(card_num_q, style=custom_style_2).get('card_num')
         if self.verify_card_number(card_num):
             cprint('This card number is Valid', 'green')
-        else: 
+        else:
             cprint('This card number is invalid', 'red')
         options = [{
             'type': 'list',
@@ -275,14 +296,21 @@ class usr_interface:
         ans = prompt(options, style=custom_style_2).get('ans')
         if ans == "Test another number":
             self.verify_num_program()
-        else: self.starting()
+        else:
+            self.starting()
 
     def admin_program(self):
         program_q = [{
-            'type': 'list',
-            'name': 'action',
-            'message': '\n'*75,
-            'choices': ["View all accounts", "Delete an account", "Execute SQL command", "Log out", "Exit"]
+            'type':
+            'list',
+            'name':
+            'action',
+            'message':
+            '\n' * 75,
+            'choices': [
+                "View all accounts", "Delete an account",
+                "Execute SQL command", "Log out", "Exit"
+            ]
         }]
 
         self.clear()
@@ -314,14 +342,17 @@ class usr_interface:
 
         elif action.get('action') == "Exit":
             os._exit(1)
-        
+
         self.admin_program()
 
     def big_text(self, text, colour):
-        return cprint(figlet_format(text), colour)      
+        return cprint(figlet_format(text), colour)
 
     def clear(self):
-        print(chr(27) + "[2J")
+        if os.name == "nt":
+            os.system('cls')
+        else:
+            os.system('clear')
 
     def wait(self):
         if os.name == "nt":
