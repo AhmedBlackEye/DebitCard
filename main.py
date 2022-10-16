@@ -141,8 +141,11 @@ class usr_interface:
         else:
             self.db.add_account(info)
             cprint(
-                'Your account has successfully registered, press Enter to Login',
+                'Your account has successfully registered, Your informations:',
                 'green')
+
+            output = f"{'Username':18} {'Card Number':18} {'Expiry Date':12} {'Money'}\n" + '-' * 56 + f"\n{info['usrname']:18} {info['card_num']:18} {str(info['expiry_date']):12} 1000"
+            cprint(output, 'yellow')
             self.wait()
             self.login()
 
@@ -346,7 +349,7 @@ class usr_interface:
         self.admin_program()
 
     def big_text(self, text, colour):
-        return cprint(figlet_format(text), colour)
+        cprint(figlet_format(text), colour)
 
     def clear(self):
         if os.name == "nt":

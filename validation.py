@@ -17,7 +17,10 @@ class NumValidator(Validator):
 class UsrnameValidator(Validator):
 
     def validate(self, document):
-        alphabet = 'abcdefghijklmnopqrstuvwxyz. '
+        alphabet = 'abcdefghijklmnopqrstuvwxyz._ '
+        if not (3 <= len(document.text) <= 12):
+            raise_err("Number of characters should be between 3 and 12",
+                      len(document.text))
         for letter in document.text:
             if letter not in alphabet:
                 raise_err("Only lowercase letters are allowed",
@@ -27,7 +30,7 @@ class UsrnameValidator(Validator):
 class DateValidator(Validator):
 
     def validate(self, document):
-        from datetime import datey
+        from datetime import date
         current_yr = date.today().year
         try:
             days, month, year = document.text.split('/')

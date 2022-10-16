@@ -90,9 +90,10 @@ class DebitCard_db(Database):
         accounts = c.fetchall()
         conn.commit()
         conn.close()
-        output = 'ID\t Username\tCard Number\t \tExpiry Date\t Money\n'
+        columns = f"{'ID':8} {'Username':18} {'Card Number':18} {'Expiry Date':12} {'Money'}\n"
+        output =  columns + '-'*len(columns) + '\n'
         for account in accounts[1:]:
-            output += f"{account[0]}\t {account[1]}\t\t{account[4]}\t {account[6]}\t {account[8]}\n"
+            output += f"{str(account[0]):8} {account[1]:18} {account[4]:18} {account[6]:12} {account[8]}\n"
 
         return output
 
