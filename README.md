@@ -1,10 +1,10 @@
 # Debit Card CLI
 
 
-Debit Card CLI is simple abstraction of what an interactive Debit Card CLI would look like without caring too much about server side requests. The program Written in python and SQL lite library.
+A Debit Card CLI is a simple abstraction of what an interactive debit card CLI would look like without caring much about server-side or handling requests. The program is written in the Python library and SQLite3.
 
 ## Features
-![Screenshot](DebitCard.JPG)
+![Image](https://github.com/AhmedBlackEye/DebitCard/blob/main/Debitcard.jpg?raw=true)
 - Accounts are saved in a local DB to remember users
 - Instant and interactive validations
 - Card Number checker based on Luhn algorithm
@@ -14,10 +14,9 @@ Debit Card CLI is simple abstraction of what an interactive Debit Card CLI would
 
 Debit Card CLI uses a number of open source python libraries to work properly:
 
-- cryptography
-- sqlite3
-- validation
 - PyInquirer
+- Termcolor
+- Pyfiglet
 - etc..
 
 ## Installation
@@ -36,3 +35,6 @@ python main.py
 # License
 
 ### **MIT**
+
+
+ 

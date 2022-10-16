@@ -333,12 +333,7 @@ class usr_interface:
             self.wait()
 
         elif action.get('action') == "Execute SQL command":
-            command = input('Enter the SQL command:\n\t')
-            try:
-                output = self.db.exec_sql(command)
-                cprint(output, 'grey')
-            except sqlite3.OperationalError:
-                cprint("You have entered invalid SQL command", 'red')
+            self.sql_terminal()
 
         elif action.get('action') == "Log out":
             return self.starting()
@@ -347,6 +342,25 @@ class usr_interface:
             os._exit(1)
 
         self.admin_program()
+
+    def sql_terminal(self):
+        self.clear()
+        self.big_text('> SQLite 3', 'yellow')
+        cprint('>> To exit type: exit or exit()', 'yellow')
+        while True:
+            command = input('\n>>> ')
+            if command in ['exit', 'exit()']:
+                break
+            elif command == 'schema':
+                output = self.db.exec_sql("select sql from sqlite_master where type = 'table' and name = 'accounts';")
+                cprint(output, 'green')
+                continue
+            try:
+                output = self.db.exec_sql(command)
+                cprint(output, 'green')
+            except sqlite3.OperationalError:
+                cprint("Invalid SQL command", 'red')
+            self.wait()
 
     def big_text(self, text, colour):
         cprint(figlet_format(text), colour)

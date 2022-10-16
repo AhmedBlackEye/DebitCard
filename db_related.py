@@ -33,7 +33,7 @@ class DebitCard_db(Database):
 
         encr_pin = encrypt_('0000').decode()
         exec = f"""INSERT INTO accounts(username, password)
-            VALUES("admin", "{encr_pin}") """
+            VALUES('admin', '{encr_pin}') """
         conn, c = self.create_connection()
         c.execute(table)
         c.execute(exec)
@@ -47,8 +47,7 @@ class DebitCard_db(Database):
             date_of_birth, expiry_date, password, money)
             VALUES(
             "{account.get('usrname')}", "{account.get('card_type')}", "{account.get('contactless')}",
-            "{account.get('card_num')}","{account.get('date_of_birth')}", "{account.get('expiry_date')}", "{account.get('passwd')}", 1000
-            ) """
+            "{account.get('card_num')}","{account.get('date_of_birth')}", "{account.get('expiry_date')}", "{account.get('passwd')}\", 1000) """
         c.execute(exec)
         conn.commit()
         conn.close
@@ -56,7 +55,7 @@ class DebitCard_db(Database):
     def del_account(self, usrname):
         conn, c = self.create_connection()
         exec = f"""DELETE FROM accounts
-            WHERE username = "{usrname}" """
+            WHERE username = "{usrname}\" """
         c.execute(exec)
         conn.commit()
         conn.close
