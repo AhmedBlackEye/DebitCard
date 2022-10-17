@@ -360,7 +360,6 @@ class usr_interface:
                 cprint(output, 'green')
             except sqlite3.OperationalError:
                 cprint("Invalid SQL command", 'red')
-            self.wait()
 
     def big_text(self, text, colour):
         cprint(figlet_format(text), colour)
